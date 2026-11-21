@@ -1,0 +1,33 @@
+feature_set,preprocessing,model,accuracy,macro_f1,minutes,acc_session6,acc_session7,acc_session8
+all31,standard,kNN,0.7706,0.7654,0.07,0.8259,0.7714,0.7146
+all31,standard,SVM,0.7486,0.7462,2.08,0.816,0.7544,0.6752
+all31,standard,Random Forest,0.7931,0.7884,0.44,0.8662,0.7967,0.7165
+all31,yeo-johnson,kNN,0.8046,0.7998,0.13,0.8603,0.8048,0.7487
+all31,yeo-johnson,SVM,0.7972,0.7959,1.83,0.8689,0.8011,0.7217
+all31,speed-norm,kNN,0.7735,0.7683,0.07,0.8114,0.7732,0.7359
+all31,speed-norm,SVM,0.7883,0.7868,2.04,0.8424,0.7944,0.7279
+all31,speed-norm,Random Forest,0.8085,0.8034,0.47,0.8597,0.8127,0.7532
+H+UD,standard,kNN,0.7454,0.7399,0.06,0.8043,0.7406,0.6914
+H+UD,standard,SVM,0.7333,0.7313,1.81,0.8037,0.7344,0.6619
+H+UD,standard,Random Forest,0.7937,0.789,0.34,0.864,0.7933,0.7237
+H+UD,yeo-johnson,kNN,0.8002,0.7951,0.09,0.8579,0.7987,0.7438
+H+UD,yeo-johnson,SVM,0.7889,0.7875,1.82,0.8598,0.7933,0.7137
+H+UD,speed-norm,kNN,0.7777,0.7729,0.08,0.819,0.7822,0.7319
+H+UD,speed-norm,SVM,0.7788,0.7776,2.07,0.8397,0.7854,0.7113
+H+UD,speed-norm,Random Forest,0.7942,0.7883,0.37,0.8513,0.797,0.7344
+H only,standard,kNN,0.4906,0.4775,0.21,0.5329,0.4832,0.4557
+H only,standard,SVM,0.5224,0.5151,1.79,0.5779,0.5081,0.4813
+H only,standard,Random Forest,0.535,0.5206,0.29,0.5878,0.5222,0.4949
+H only,yeo-johnson,kNN,0.4902,0.4773,0.22,0.5379,0.4786,0.454
+H only,yeo-johnson,SVM,0.5248,0.5175,2.33,0.5759,0.5146,0.4838
+H only,speed-norm,kNN,0.4906,0.4775,0.36,0.5329,0.4832,0.4557
+H only,speed-norm,SVM,0.5224,0.5151,2.43,0.5779,0.5081,0.4813
+H only,speed-norm,Random Forest,0.535,0.5206,0.33,0.5878,0.5222,0.4949
+UD only,standard,kNN,0.5481,0.5383,0.25,0.6076,0.5432,0.4935
+UD only,standard,SVM,0.537,0.5308,2.66,0.6006,0.534,0.4765
+UD only,standard,Random Forest,0.5808,0.5728,0.34,0.6594,0.5735,0.5095
+UD only,yeo-johnson,kNN,0.5825,0.5725,0.19,0.6417,0.5759,0.53
+UD only,yeo-johnson,SVM,0.5847,0.5809,2.26,0.6576,0.5787,0.5178
+UD only,speed-norm,kNN,0.5646,0.5537,0.26,0.6086,0.5675,0.5178
+UD only,speed-norm,SVM,0.569,0.5646,3.83,0.63,0.5716,0.5054
+UD only,speed-norm,Random Forest,0.5779,0.569,0.56,0.6362,0.5763,0.5213
