@@ -1,0 +1,3 @@
+model,augmentation,seed,best_epoch,val_accuracy,test_accuracy,test_macro_f1,minutes,acc_session6,acc_session7,acc_session8
+LSTM,static,0,44,0.8308,0.8004,0.7991,10.8,0.8681,0.7962,0.7368
+GRU,static,0,29,0.8395,0.805,0.8028,4.5,0.8667,0.8003,0.7481

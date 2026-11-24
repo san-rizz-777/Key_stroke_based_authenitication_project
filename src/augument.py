@@ -35,6 +35,7 @@ RandomForest_conf = dict(n_estimators=400, min_samples_leaf=1,max_features="sqrt
 XGBoost_conf = dict(tree_method="hist", colsample_bytree=0.9233589392465844,learning_rate=0.06049716507542575,max_depth=3,min_child_weight=3,n_estimators=300,reg_lambda=3.8718305057994216,subsample=0.8439986631130484)
 LGBM_conf = dict(subsample_freq=1, colsample_bytree=0.6232334448672797,learning_rate=0.22044355215811345,min_child_samples=40,n_estimators=200, num_leaves=15,reg_lambda=8.706020878304859, subsample=0.9329770563201687, verbose=-1)
 
+# data split into train and test
 os.makedirs("results", exist_ok=True)
 df = pd.read_csv(CSV_PATH)
 feats = [c for c in df.columns if c.startswith(("H.", "DD.", "UD."))]
@@ -44,6 +45,7 @@ X_tr, y_tr = train[feats].values, train["subject"].values
 X_te, y_te = test[feats].values, test["subject"].values
 sess_te = test["sessionIndex"].values
 rng = np.random.default_rng(SEED)
+model_names = ["kNN", "SVM", "RF", "XGB", "LGBM"]
 
 
 def augment(X, y, scale_range, copies):
@@ -63,15 +65,14 @@ def augment(X, y, scale_range, copies):
 
 # Returns a pipeline with already tuned conf
 def make(algo):
-    if algo == "kNN":
-        clf = KNeighborsClassifier(n_jobs=-1, **KNN_conf)
-    elif algo == "SVM":
+    clf = KNeighborsClassifier(n_jobs=-1, **KNN_conf)
+    if algo == "SVM":
         SVC(kernel="rbf", **SVM_conf)
     elif algo == "RF":
         clf = RandomForestClassifier(n_jobs=-1, random_state=SEED, **RandomForest_conf)
     elif algo == "XGB":
         clf = XGBClassifier(n_jobs=-1, random_state=SEED, **XGBoost_conf)
-    else:
+    elif algo == "LGBM":
         clf = LGBMClassifier(n_jobs=-1,random_state=SEED,  **LGBM_conf)
 
     if algo in ["kNN", "SVM"]:
@@ -81,7 +82,7 @@ def make(algo):
 
 
 rows = []
-for name in ["kNN"] + (["SVM"] if USE_SVM else []):
+for name in model_names:
     for r in SCALE_RANGES:
         t0 = time.time()
         Xa, ya = augment(X_tr, y_tr, r, COPIES)

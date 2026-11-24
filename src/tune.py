@@ -11,9 +11,6 @@ Protocol (no leakage):
         train on sessions 1-3 -> validate on 4
         train on sessions 1-4 -> validate on 5
   * Sessions 6-8 are used ONCE per model, at the end, with the best settings.
-
-Colab:  %run tune.py /content/your_file.csv
-Output: results/tuned_results.csv, results/best_params.json
 """
 import json
 import os
@@ -30,32 +27,21 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, PowerTransformer
 from sklearn.svm import SVC
+from xgboost import XGBClassifier
+from lightgbm import LGBMClassifier
 
-try:
-    from xgboost import XGBClassifier
-except ImportError:
-    XGBClassifier = None
-try:
-    from lightgbm import LGBMClassifier
-except ImportError:
-    LGBMClassifier = None
 
-# ------------------------- settings you can change ---------------------------
+# custom configuration
 CSV_PATH = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1].endswith(".csv") else "data/lab_dataset.csv"
 MODELS = ["kNN", "SVM", "Random Forest", "XGBoost", "LightGBM"]
 QUICK = False                     # True = small, fast first pass
 TUNE_FRAC = 0.5                   # fraction of sessions 1-5 rows used during the search
-N_ITER = {"kNN": 15, "SVM": 12, "Random Forest": 10, "XGBoost": 10, "LightGBM": 10}
+N_ITER = {"kNN": 15, "SVM": 12, "Random Forest": 10, "XGBoost": 10, "LightGBM": 10}              # can be changed
 SEED = 42
+# for fast first check tune only on kNN
 if QUICK:
     TUNE_FRAC = 0.25
     N_ITER = {k: 4 for k in N_ITER}
-# -----------------------------------------------------------------------------
-
-for name, lib in (("XGBoost", XGBClassifier), ("LightGBM", LGBMClassifier)):
-    if lib is None and name in MODELS:
-        print(f"{name} not installed (pip install {name.lower()}), skipping it")
-        MODELS.remove(name)
 
 os.makedirs("results", exist_ok=True)
 df = pd.read_csv(CSV_PATH)
@@ -117,7 +103,7 @@ def clean(v):
     return v
 
 
-# ------------------------------ data and splits -------------------------------
+#  data and splits
 le = LabelEncoder().fit(df["subject"])                 # boosting libraries need integer labels
 train = df[df.sessionIndex <= 5].reset_index(drop=True)
 test = df[df.sessionIndex > 5].reset_index(drop=True)
@@ -125,13 +111,14 @@ X_tr, y_tr = train[feats].values, le.transform(train["subject"])
 X_te, y_te = test[feats].values, le.transform(test["subject"])
 sess_te = test["sessionIndex"].values
 
+# Split is based on the session
 rng = np.random.default_rng(SEED)
 idx = np.sort(rng.choice(len(train), size=int(len(train) * TUNE_FRAC), replace=False))
 X_s, y_s, s_s = X_tr[idx], y_tr[idx], train["sessionIndex"].values[idx]
 folds = [(np.where(s_s < v)[0], np.where(s_s == v)[0]) for v in (4, 5)]   # train on the past, validate on a later session
 print(f"Users: {len(le.classes_)} | train rows: {len(train)} | search rows: {len(idx)} | test rows: {len(test)}")
 
-# --------------------------------- tuning ------------------------------------
+# tuning
 rows, best_params = [], {}
 for name in MODELS:
     t0 = time.time()
@@ -160,6 +147,8 @@ for name in MODELS:
     rows.append(row)
     print(row, "\n   best:", best_params[name], "\n")
 
+
+# Output
 res = pd.DataFrame(rows)
 res.to_csv("results/tuned_results.csv", index=False)
 with open("results/best_params.json", "w") as f:
